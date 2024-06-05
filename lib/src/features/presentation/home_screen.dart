@@ -47,15 +47,22 @@ class _HomeScreenState extends State<HomeScreen> {
           final bloc = context.read<PersonCubit>();
           final personList = bloc.personList;
           return Center(
-              child: ListView(
-            children: [
-              ...personList.map((e) => Column(
-                    children: [
-                      Text(e.firstname!),
-                      Text("address:${e.address!.streetName!}")
-                    ],
-                  )),
-            ],
+              child: ListView.builder(
+            itemCount: personList.length,
+            itemBuilder: (context, index) {
+              final persons = personList[index];
+              return ListTile(
+                title: Text("${persons.firstname!} ${persons.lastname!}"),
+                subtitle: Text(persons.email!),
+                leading: FadeInImage.assetNetwork(
+                  placeholder: "assets/images/image_placeholder.jpg",
+                  image: persons.image!,
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return Image.asset("assets/images/error.png");
+                  },
+                ),
+              );
+            },
           ));
         },
         listener: (context, state) {},
