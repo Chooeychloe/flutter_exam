@@ -12,12 +12,14 @@ class BuildWebView extends StatefulWidget {
   final int displayedItemsCount;
   final bool noMoreItems;
   final VoidCallback loadMoreItems;
+  final Future<void> Function() onRefresh;
 
   const BuildWebView({
     super.key,
     required this.displayedItemsCount,
     required this.noMoreItems,
     required this.loadMoreItems,
+    required this.onRefresh,
   });
 
   @override
@@ -61,8 +63,18 @@ class _BuildWebViewState extends State<BuildWebView> {
                 : personList.length;
             return Column(
               children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: widget.onRefresh,
+                    child: const Text('Refresh'),
+                  ),
+                ),
                 Expanded(
-                  child: ListView.builder(
+                  child: ListView.separated(
+                    separatorBuilder: (context, index) {
+                      return const Divider();
+                    },
                     physics: const AlwaysScrollableScrollPhysics(),
                     itemCount: itemCount + 1,
                     itemBuilder: (context, index) {
@@ -70,6 +82,7 @@ class _BuildWebViewState extends State<BuildWebView> {
                         final persons = personList[index];
                         final position = index + 1;
                         return ListTile(
+                          textColor: Colors.black,
                           title: Text(
                               "$position. ${persons.firstname!} ${persons.lastname!}"),
                           subtitle: Text(persons.email!),
@@ -94,7 +107,7 @@ class _BuildWebViewState extends State<BuildWebView> {
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
                       onPressed: widget.loadMoreItems,
-                      child: Text('Load More'),
+                      child: const Text('Load More'),
                     ),
                   ),
               ],

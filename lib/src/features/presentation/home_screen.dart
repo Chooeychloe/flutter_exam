@@ -17,11 +17,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final int totalItems = 100;
   final int itemsPerPage = 10;
   int displayedItemsCount = 10;
   bool noMoreItems = false;
-  void _loadMoreItems() {
+  void _loadMoreItems(int totalItems) {
     setState(() {
       if (displayedItemsCount < totalItems) {
         displayedItemsCount += itemsPerPage;
@@ -33,6 +32,14 @@ class _HomeScreenState extends State<HomeScreen> {
         noMoreItems = true;
       }
     });
+  }
+
+  Future<void> _refreshItems(BuildContext context) async {
+    setState(() {
+      displayedItemsCount = itemsPerPage;
+      noMoreItems = false;
+    });
+    context.read<PersonCubit>().initialize();
   }
 
   @override
@@ -60,18 +67,39 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Person List'),
-        ),
-        body: kIsWeb
-            ? BuildWebView(
-                displayedItemsCount: displayedItemsCount,
-                noMoreItems: noMoreItems,
-                loadMoreItems: _loadMoreItems)
-            : BuildMobileView(
-                displayedItemsCount: displayedItemsCount,
-                noMoreItems: noMoreItems,
-                loadMoreItems: _loadMoreItems));
+    return BlocProvider<PersonCubit>(
+      create: (context) => getIt<PersonCubit>()..initialize(),
+      child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Person List'),
+          ),
+          body: kIsWeb
+              ? BlocBuilder<PersonCubit, PersonState>(
+                  builder: (context, state) {
+                    return BuildWebView(
+                      displayedItemsCount: displayedItemsCount,
+                      noMoreItems: noMoreItems,
+                      loadMoreItems: () {
+                        _loadMoreItems(
+                            context.read<PersonCubit>().personList.length);
+                      },
+                      onRefresh: () => _refreshItems(context),
+                    );
+                  },
+                )
+              : BlocBuilder<PersonCubit, PersonState>(
+                  builder: (context, state) {
+                    return BuildMobileView(
+                      displayedItemsCount: displayedItemsCount,
+                      noMoreItems: noMoreItems,
+                      loadMoreItems: () {
+                        _loadMoreItems(
+                            context.read<PersonCubit>().personList.length);
+                      },
+                      onRefresh: () => _refreshItems(context),
+                    );
+                  },
+                )),
+    );
   }
 }

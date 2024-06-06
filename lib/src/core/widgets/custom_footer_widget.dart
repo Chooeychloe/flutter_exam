@@ -8,15 +8,18 @@ class CustomFooterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (noMoreItems) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
+      return const Padding(
+        padding: EdgeInsets.all(8.0),
         child: Center(
-          child: Text('No more items'),
+          child: Text(
+            'No more data.',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
       );
     } else {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
+      return const Padding(
+        padding: EdgeInsets.all(8.0),
         child: Center(
           child: CircularProgressIndicator(),
         ),
