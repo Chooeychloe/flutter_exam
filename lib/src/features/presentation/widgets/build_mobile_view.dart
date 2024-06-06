@@ -5,6 +5,7 @@ import 'package:flutter_exam/src/core/widgets/custom_footer_widget.dart';
 import 'package:flutter_exam/src/features/application/person_cubit.dart';
 import 'package:flutter_exam/src/features/data/repository/i_person_repository.dart';
 import 'package:flutter_exam/src/features/data/repository/person_remote_repository.dart';
+import 'package:flutter_exam/src/features/presentation/person_complete_data.dart';
 
 class BuildMobileView extends StatefulWidget {
   final int displayedItemsCount;
@@ -83,7 +84,15 @@ class _BuildMobileViewState extends State<BuildMobileView> {
                     final persons = personList[index];
                     final position = index + 1;
                     return ListTile(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                PersonCompleteData(person: persons),
+                          ),
+                        );
+                      },
                       title: Text(
                           "$position. ${persons.firstname!} ${persons.lastname!}"),
                       subtitle: Text(persons.email!),

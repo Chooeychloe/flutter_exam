@@ -7,6 +7,7 @@ import 'package:flutter_exam/src/features/application/person_cubit.dart';
 import 'package:flutter_exam/src/features/data/model/person_model.dart';
 import 'package:flutter_exam/src/features/data/repository/i_person_repository.dart';
 import 'package:flutter_exam/src/features/data/repository/person_remote_repository.dart';
+import 'package:flutter_exam/src/features/presentation/person_complete_data.dart';
 
 class BuildWebView extends StatefulWidget {
   final int displayedItemsCount;
@@ -82,6 +83,15 @@ class _BuildWebViewState extends State<BuildWebView> {
                         final persons = personList[index];
                         final position = index + 1;
                         return ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PersonCompleteData(person: persons),
+                              ),
+                            );
+                          },
                           textColor: Colors.black,
                           title: Text(
                               "$position. ${persons.firstname!} ${persons.lastname!}"),
